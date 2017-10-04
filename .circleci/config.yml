@@ -1,0 +1,21 @@
+version: 2
+jobs:
+   build:
+     docker:
+       - image: circleci/ruby:2.4
+     steps:
+       - checkout
+
+      # Restore bundle cache
+      - restore_cache:
+          key: gem-{{ checksum "Gemfile.lock" }}
+
+      - run: bundle install --path vendor/bundle
+
+      # Store bundle cache
+      - save_cache:
+          key: gem-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+      - run: bundle exec rake test
